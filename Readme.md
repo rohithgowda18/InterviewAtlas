@@ -1,79 +1,121 @@
-# Company Wise LeetCode DSA Sheets
+# InterviewAtlas
 
-A premium, production-quality, responsive web application for company-wise LeetCode DSA sheets. It reads and parses CSV files dynamically and manages all progress (solved, bookmarks, recently visited) locally.
+A fast, production-ready web application for exploring company-wise LeetCode interview questions. Built with Next.js 15, the application serves pre-generated TypeScript datasets for optimal performance, eliminating runtime CSV parsing.
 
 ## Features
 
-- **Dynamic Loading:** Scans `companies/` folders to dynamically generate company dashboards. No hardcoded arrays.
-- **Timeframe Tabs:** Filter questions by timeframe (All, 30 Days, 3 Months, 6 Months, More than 6 Months).
-- **Advanced Filtering & Sorting:**
-  - Search by Title
-  - Filter by Difficulty (Easy, Medium, Hard)
-  - Filter by Topic tags (dynamically collected from current questions)
-  - Filter by Solved / Unsolved Status
-  - Filter by Bookmarked questions
-  - Sort by Frequency, Acceptance Rate, Alphabetical, or Difficulty (both Ascending and Descending)
-- **Local Persistence:**
-  - Solved status tracking (`solved_questions` key, stored by `company_title` format)
-  - Bookmark tracking (`bookmarked_questions` key, stored by `company_title` format)
-  - Theme state (`theme` key, via `next-themes`)
-  - Recently visited companies (`recently_visited_companies` key)
-- **Premium UI:**
-  - Modern Dark Mode styled interface inspired by Vercel, Linear, LeetCode, and Shadcn.
-  - Interactive circular SVG progress indicators.
-  - Interactive cards with hover lifts, animations, and transitions using Framer Motion.
-  - Horizontal scrolling table representation on mobile viewports.
-  - Custom scroll to top assist float.
-  - Share progress (copy shareable text) and copy page url shortcuts.
-- **Performance & SEO:**
-  - Dynamic SEO meta tags per company sheet.
-  - Memoized filtering and sorting.
-  - Server components for quick data load and high-performance compilation.
+- **470+ Company Sheets**
+  - Browse interview question sheets for hundreds of companies.
+  - Company overview with question statistics and difficulty distribution.
+
+- **Company Question Explorer**
+  - Search questions instantly.
+  - Filter by:
+    - Difficulty
+    - Topic
+    - Solved / Unsolved
+    - Bookmarked
+  - Sort by:
+    - Frequency
+    - Difficulty
+    - Alphabetical
+
+- **Progress Tracking**
+  - Mark questions as solved.
+  - Bookmark important questions.
+  - Recently visited companies.
+  - All progress is stored locally in the browser.
+
+- **Modern UI**
+  - Responsive design for desktop, tablet, and mobile.
+  - Dark/Light theme.
+  - Smooth animations with Framer Motion.
+  - Keyboard-friendly interface.
+  - Pagination for large datasets.
+
+- **High Performance**
+  - Static generation with Next.js App Router.
+  - Pre-generated TypeScript datasets.
+  - Lazy loading of company data.
+  - Zero runtime CSV parsing.
+  - Optimized for Vercel deployment.
+
+---
 
 ## Tech Stack
 
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS & Vanilla CSS Variables
-- **Animations:** Framer Motion
-- **State Management:** Zustand
-- **CSV Parser:** Papa Parse (pure JS, lightweight)
-- **Icons:** Lucide React
-- **Themes:** next-themes
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Zustand
+- next-themes
+- Lucide React
+
+---
 
 ## Project Structure
 
+```text
+app/                 Next.js App Router
+components/          Reusable UI components
+generated/           Pre-generated company datasets
+hooks/               Custom React hooks
+lib/                 Utilities and data loading
+public/              Static assets
+store/               Zustand state management
+types/               TypeScript definitions
 ```
-├── app/                  # Next.js App Router (pages and layouts)
-├── companies/            # Raw company directories containing CSVs
-├── components/           # Reusable UI components
-├── hooks/                # Custom React hooks (state hydration, etc.)
-├── lib/                  # Utilities (CSV parsing, math operations, filters)
-├── store/                # Zustand store configuration
-├── types/                # TypeScript interface definitions
-├── package.json          # Node dependencies
-└── tailwind.config.ts    # Styling configurations
+
+---
+
+## Data Architecture
+
+The application uses a compile-time data generation workflow.
+
+```
+Raw CSV Files
+        │
+        ▼
+Generation Script (development only)
+        │
+        ▼
+generated/*.ts
+        │
+        ▼
+Next.js Application
 ```
 
-## Installation & Setup
+Only the generated TypeScript files are required for production.
 
-1. **Clone the repository or navigate to root:**
-   ```bash
-   cd leetcode-company-wise-problems-main
-   ```
+The raw CSV files and generation scripts are development assets and are not required for deployment.
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+---
 
-3. **Start the local development server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Local Development
 
-4. **Build for production:**
-   ```bash
-   npm run build
-   ```
+Clone the repository:
+
+```bash
+git clone <repository-url>
+cd InterviewAtlas
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Visit:
+
+```
+http://localhost:3000
+``
