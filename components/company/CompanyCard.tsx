@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Company } from "@/types";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface CompanyCardProps {
   company: Company;
