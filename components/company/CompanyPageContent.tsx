@@ -1,15 +1,22 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Question, Roadmap } from "@/types";
 import { useDSA } from "@/hooks/useDSA";
-import { filterQuestions, sortQuestions, calculateProgressPercentage, cn } from "@/lib/utils";
+import {
+  filterQuestions,
+  sortQuestions,
+  calculateProgressPercentage,
+  cn,
+} from "@/lib/utils";
 
 import Filters from "@/components/common/Filters";
 import QuestionTable from "@/components/question/QuestionTable";
 import Pagination from "@/components/common/Pagination";
 import SearchBar from "@/components/common/SearchBar";
+import ProgressCircle from "@/components/common/ProgressCircle";
+import KeyboardShortcuts from "@/components/common/KeyboardShortcuts";
 
 import {
   Copy,
@@ -17,8 +24,9 @@ import {
   Shuffle,
   Eye,
   EyeOff,
-  Keyboard,
-  CheckCircle,
+  CheckCircle2,
+  Bookmark,
+  BarChart2,
 } from "lucide-react";
 
 interface CompanyPageContentProps {
@@ -65,14 +73,16 @@ export default function CompanyPageContent({
   const [search, setSearch] = useState(initialSearch);
   const [difficulty, setDifficulty] = useState(initialDifficulty);
   const [topic, setTopic] = useState(initialTopic);
-  const [showSolved, setShowSolved] = useState<"all" | "solved" | "unsolved">(initialShowSolved);
-  const [showBookmarked, setShowBookmarked] = useState(searchParams.get("bookmarked") === "true");
-
-  const [sortBy, setSortBy] = useState<"frequency" | "alphabetical" | "difficulty">(
-    "frequency"
+  const [showSolved, setShowSolved] = useState<"all" | "solved" | "unsolved">(
+    initialShowSolved
   );
+  const [showBookmarked, setShowBookmarked] = useState(
+    searchParams.get("bookmarked") === "true"
+  );
+  const [sortBy, setSortBy] = useState<
+    "frequency" | "alphabetical" | "difficulty"
+  >("frequency");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
@@ -84,24 +94,48 @@ export default function CompanyPageContent({
     if (showSolved !== "all") params.set("status", showSolved);
     if (showBookmarked) params.set("bookmarked", "true");
     if (activeTab !== "all") params.set("tab", activeTab);
-
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }, [search, difficulty, topic, showSolved, showBookmarked, activeTab, router, pathname]);
+  }, [
+    search,
+    difficulty,
+    topic,
+    showSolved,
+    showBookmarked,
+    activeTab,
+    router,
+    pathname,
+  ]);
 
   const rawQuestions = useMemo(() => {
     return questionsMap[activeTab] || [];
   }, [questionsMap, activeTab]);
 
-  const solvedIdsSet = useMemo(() => new Set(solvedQuestions), [solvedQuestions]);
-  const bookmarkedIdsSet = useMemo(() => new Set(bookmarkedQuestions), [bookmarkedQuestions]);
+  const solvedIdsSet = useMemo(
+    () => new Set(solvedQuestions),
+    [solvedQuestions]
+  );
+  const bookmarkedIdsSet = useMemo(
+    () => new Set(bookmarkedQuestions),
+    [bookmarkedQuestions]
+  );
 
-  const companySolvedCount = useMemo(() => {
-    return rawQuestions.filter((q) => solvedIdsSet.has(q.id)).length;
-  }, [rawQuestions, solvedIdsSet]);
-
-  const solvedPercentage = useMemo(() => {
-    return calculateProgressPercentage(companySolvedCount, rawQuestions.length);
-  }, [companySolvedCount, rawQuestions.length]);
+  // Stats for the dashboard
+  const totalQ = rawQuestions.length;
+  const easyCount = rawQuestions.filter((q) => q.difficulty === "Easy").length;
+  const mediumCount = rawQuestions.filter((q) => q.difficulty === "Medium").length;
+  const hardCount = rawQuestions.filter((q) => q.difficulty === "Hard").length;
+  const companySolvedCount = useMemo(
+    () => rawQuestions.filter((q) => solvedIdsSet.has(q.id)).length,
+    [rawQuestions, solvedIdsSet]
+  );
+  const companyBookmarkedCount = useMemo(
+    () => rawQuestions.filter((q) => bookmarkedIdsSet.has(q.id)).length,
+    [rawQuestions, bookmarkedIdsSet]
+  );
+  const solvedPercentage = useMemo(
+    () => calculateProgressPercentage(companySolvedCount, totalQ),
+    [companySolvedCount, totalQ]
+  );
 
   const filteredAndSortedQuestions = useMemo(() => {
     const filtered = filterQuestions(
@@ -111,7 +145,18 @@ export default function CompanyPageContent({
       bookmarkedIdsSet
     );
     return sortQuestions(filtered, sortBy, sortOrder);
-  }, [rawQuestions, search, difficulty, topic, showSolved, showBookmarked, sortBy, sortOrder, solvedIdsSet, bookmarkedIdsSet]);
+  }, [
+    rawQuestions,
+    search,
+    difficulty,
+    topic,
+    showSolved,
+    showBookmarked,
+    sortBy,
+    sortOrder,
+    solvedIdsSet,
+    bookmarkedIdsSet,
+  ]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -125,37 +170,54 @@ export default function CompanyPageContent({
   const totalPages = Math.ceil(filteredAndSortedQuestions.length / itemsPerPage);
 
   const handleSurpriseMe = useCallback(() => {
-    const unsolved = filteredAndSortedQuestions.filter((q) => !solvedIdsSet.has(q.id));
-    const listToChoose = unsolved.length > 0 ? unsolved : filteredAndSortedQuestions;
+    const unsolved = filteredAndSortedQuestions.filter(
+      (q) => !solvedIdsSet.has(q.id)
+    );
+    const listToChoose =
+      unsolved.length > 0 ? unsolved : filteredAndSortedQuestions;
     if (listToChoose.length === 0) return;
-    const randomQuestion = listToChoose[Math.floor(Math.random() * listToChoose.length)];
+    const randomQuestion =
+      listToChoose[Math.floor(Math.random() * listToChoose.length)];
     window.open(randomQuestion.link, "_blank");
   }, [filteredAndSortedQuestions, solvedIdsSet]);
 
+  const handleClearAllFilters = useCallback(() => {
+    setSearch("");
+    setDifficulty("all");
+    setTopic("all");
+    setShowSolved("all");
+    setShowBookmarked(false);
+  }, []);
+
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
-        if (e.key === "Escape") {
-          target.blur();
-        }
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable
+      ) {
+        if (e.key === "Escape") target.blur();
         return;
       }
 
       if (e.key === "/") {
         e.preventDefault();
-        const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+        const input = document.querySelector(
+          'input[type="text"]'
+        ) as HTMLInputElement;
         input?.focus();
       } else if (e.key === "Escape") {
         handleClearAllFilters();
-      } else if (e.key.toLowerCase() === "s") {
+      } else if (e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
         handleSurpriseMe();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleSurpriseMe]);
+  }, [handleSurpriseMe, handleClearAllFilters]);
 
   const [copiedShare, setCopiedShare] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
@@ -182,87 +244,143 @@ export default function CompanyPageContent({
     showSolved !== "all" ||
     showBookmarked;
 
-  const handleClearAllFilters = () => {
-    setSearch("");
-    setDifficulty("all");
-    setTopic("all");
-    setShowSolved("all");
-    setShowBookmarked(false);
-  };
-
   const tabsConfig = [
-    { key: "all", label: "All Questions" },
+    { key: "all", label: "All" },
     { key: "thirtyDays", label: "30 Days" },
     { key: "threeMonths", label: "3 Months" },
     { key: "sixMonths", label: "6 Months" },
-    { key: "moreThanSixMonths", label: "More Than 6 Months" },
+    { key: "moreThanSixMonths", label: "6 Months+" },
   ] as const;
 
   return (
-    <div className="flex flex-col gap-8 w-full py-4">
-      {/* Header Info */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-border">
-        <div className="flex items-center gap-8">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-emerald-500 flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
-            {companyName.charAt(0)}
-          </div>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-extrabold tracking-tight">{companyName} DSA Sheet</h1>
-            <p className="text-sm text-muted-foreground font-medium">
-              Solve curated questions asked in {companyName} technical interviews.
-            </p>
-            {/* Simple Text solved progress */}
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-500 mt-1">
-              <CheckCircle className="h-3.5 w-3.5" />
-              <span>Solved: {companySolvedCount} / {rawQuestions.length} ({solvedPercentage.toFixed(1)}%)</span>
+    <div className="flex flex-col gap-6 w-full py-2">
+      {/* ===== DASHBOARD HEADER ===== */}
+      <div className="rounded-2xl border border-border bg-card/60 p-5 md:p-6 flex flex-col gap-5">
+        {/* Top row: logo + name + actions */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-cyan-500 flex items-center justify-center text-white font-extrabold text-2xl shadow-md flex-shrink-0">
+              {companyName.charAt(0)}
             </div>
+            <div className="flex flex-col gap-0.5">
+              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+                {companyName}
+              </h1>
+              <p className="text-sm text-muted-foreground font-medium">
+                Interview Questions
+              </p>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleSurpriseMe}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 transition-all duration-200"
+              title="Press 'S' to trigger"
+            >
+              <Shuffle className="h-3.5 w-3.5" />
+              Surprise Me
+            </button>
+
+            <button
+              onClick={togglePracticeMode}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg border transition-all duration-200",
+                practiceMode
+                  ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20"
+                  : "bg-secondary/85 border-border hover:bg-secondary text-foreground"
+              )}
+              title="Hides difficulty & frequency until solved"
+            >
+              {practiceMode ? (
+                <EyeOff className="h-3.5 w-3.5" />
+              ) : (
+                <Eye className="h-3.5 w-3.5" />
+              )}
+              Practice: {practiceMode ? "ON" : "OFF"}
+            </button>
+
+            <button
+              onClick={handleCopyUrl}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-secondary/80 hover:bg-secondary border border-border text-foreground transition-all duration-200"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              {copiedUrl ? "Copied!" : "Copy Link"}
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-all duration-200"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              {copiedShare ? "Copied!" : "Share"}
+            </button>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleSurpriseMe}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 transition-all duration-200"
-            title="Press 'S' hotkey to trigger"
-          >
-            <Shuffle className="h-3.5 w-3.5" />
-            <span>Surprise Me</span>
-          </button>
+        {/* Stats tiles */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          {/* Progress circle tile */}
+          <div className="col-span-2 sm:col-span-1 flex items-center justify-center p-3 rounded-xl border border-border bg-secondary/20">
+            <ProgressCircle
+              percentage={solvedPercentage}
+              size={72}
+              strokeWidth={6}
+              label="Solved"
+              sublabel={`${companySolvedCount}/${totalQ}`}
+              color="#16c784"
+            />
+          </div>
 
-          <button
-            onClick={togglePracticeMode}
-            className={cn(
-              "inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-200",
-              practiceMode
-                ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20"
-                : "bg-secondary/85 border-border hover:bg-secondary text-foreground"
-            )}
-            title="Hide difficulty until you solve problems"
-          >
-            {practiceMode ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-            <span>Practice Mode: {practiceMode ? "ON" : "OFF"}</span>
-          </button>
+          {/* Stat: Total */}
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-secondary/20 gap-0.5">
+            <BarChart2 className="h-4 w-4 text-muted-foreground mb-1" />
+            <span className="text-xl font-extrabold text-foreground">{totalQ}</span>
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+              Total
+            </span>
+          </div>
 
-          <button
-            onClick={handleCopyUrl}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg bg-secondary/80 hover:bg-secondary border border-border text-foreground transition-all duration-200"
-          >
-            <Copy className="h-3.5 w-3.5" />
-            <span>{copiedUrl ? "Copied!" : "Copy Page Link"}</span>
-          </button>
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-all duration-200"
-          >
-            <Share2 className="h-3.5 w-3.5" />
-            <span>{copiedShare ? "Copied!" : "Share Progress"}</span>
-          </button>
+          {/* Stat: Easy */}
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#16c784]/20 bg-[#16c784]/5 gap-0.5">
+            <span className="text-xl font-extrabold text-[#16c784]">{easyCount}</span>
+            <span className="text-[10px] font-bold text-[#16c784]/70 uppercase tracking-wide">
+              Easy
+            </span>
+          </div>
+
+          {/* Stat: Medium */}
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 gap-0.5">
+            <span className="text-xl font-extrabold text-[#f59e0b]">{mediumCount}</span>
+            <span className="text-[10px] font-bold text-[#f59e0b]/70 uppercase tracking-wide">
+              Medium
+            </span>
+          </div>
+
+          {/* Stat: Hard */}
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#ef4444]/20 bg-[#ef4444]/5 gap-0.5">
+            <span className="text-xl font-extrabold text-[#ef4444]">{hardCount}</span>
+            <span className="text-[10px] font-bold text-[#ef4444]/70 uppercase tracking-wide">
+              Hard
+            </span>
+          </div>
+
+          {/* Stat: Bookmarks */}
+          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-500/20 bg-amber-500/5 gap-0.5">
+            <Bookmark className="h-4 w-4 text-amber-500 mb-0.5" />
+            <span className="text-xl font-extrabold text-amber-500">
+              {companyBookmarkedCount}
+            </span>
+            <span className="text-[10px] font-bold text-amber-500/70 uppercase tracking-wide">
+              Saved
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border overflow-x-auto scrollbar-none gap-4">
+      <div className="flex border-b border-border overflow-x-auto scrollbar-none gap-0">
         {tabsConfig.map((tab) => {
           const tabQuestions = questionsMap[tab.key] || [];
           if (tab.key !== "all" && tabQuestions.length === 0) return null;
@@ -272,55 +390,70 @@ export default function CompanyPageContent({
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={cn(
-                  "px-5 py-3 font-bold text-sm border-b-2 whitespace-nowrap transition-all duration-200",
-                  activeTab === tab.key
-                    ? "border-primary text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                )}
+                "px-4 py-2.5 font-bold text-sm border-b-2 whitespace-nowrap transition-all duration-200 flex items-center gap-1.5",
+                activeTab === tab.key
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
             >
-              {tab.label} ({tabQuestions.length})
+              {tab.label}
+              <span
+                className={cn(
+                  "text-[10px] px-1.5 py-0.5 rounded-full font-bold",
+                  activeTab === tab.key
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-muted-foreground"
+                )}
+              >
+                {tabQuestions.length}
+              </span>
             </button>
           );
         })}
       </div>
 
-      {/* Instant Search input */}
-      <div className="flex items-center gap-2">
+      {/* Search + filters */}
+      <div className="flex flex-col gap-2">
         <SearchBar
           value={search}
           onChange={setSearch}
-          placeholder="Search from sheet questions (Press '/' to focus)..."
-          className="max-w-md"
+          placeholder="Search questions... (Press '/' to focus)"
+          className="max-w-lg"
+          showShortcut
         />
-        <div className="p-2 rounded-lg bg-secondary/40 text-muted-foreground border border-border text-xs flex items-center gap-1 font-semibold select-none hidden sm:flex">
-          <Keyboard className="h-3.5 w-3.5" />
-          <span>Press &quot;/&quot; to search, &quot;Esc&quot; to clear</span>
-        </div>
+        <Filters
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
+          topic={topic}
+          setTopic={setTopic}
+          topicsList={topicsList as string[]}
+          showSolved={showSolved}
+          setShowSolved={setShowSolved}
+          showBookmarked={showBookmarked}
+          setShowBookmarked={setShowBookmarked}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          onClearAll={handleClearAllFilters}
+          isFiltered={isFiltered}
+        />
       </div>
 
-      {/* Filters and sorting */}
-      <Filters
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-        topic={topic}
-        setTopic={setTopic}
-        topicsList={topicsList as string[]}
-        showSolved={showSolved}
-        setShowSolved={setShowSolved}
-        showBookmarked={showBookmarked}
-        setShowBookmarked={setShowBookmarked}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-        onClearAll={handleClearAllFilters}
-        isFiltered={isFiltered}
-      />
-
       {/* Table view */}
-      <div className="flex flex-col gap-4">
-        <div className="text-xs text-muted-foreground font-semibold">
-          Showing {filteredAndSortedQuestions.length} of {rawQuestions.length} questions
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted-foreground font-semibold">
+            Showing{" "}
+            <span className="text-foreground font-bold">
+              {filteredAndSortedQuestions.length}
+            </span>{" "}
+            of{" "}
+            <span className="text-foreground font-bold">{totalQ}</span> questions
+          </span>
+          <span className="text-[10px] text-muted-foreground/60 hidden sm:flex items-center gap-1">
+            Press <kbd className="bg-secondary border border-border rounded px-1 font-mono text-[10px]">?</kbd> for shortcuts
+          </span>
         </div>
         <QuestionTable
           questions={paginatedQuestions}
@@ -335,6 +468,9 @@ export default function CompanyPageContent({
           onPageChange={setCurrentPage}
         />
       </div>
+
+      {/* Keyboard shortcuts modal */}
+      <KeyboardShortcuts />
     </div>
   );
 }

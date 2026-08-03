@@ -7,16 +7,16 @@ interface DifficultyBadgeProps {
 }
 
 export default function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps) {
-  const styles = {
-    Easy: "bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/20 border-emerald-500/20",
-    Medium: "bg-amber-500/10 text-amber-500 dark:bg-amber-500/20 border-amber-500/20",
-    Hard: "bg-rose-500/10 text-rose-500 dark:bg-rose-500/20 border-rose-500/20",
+  const styles: Record<Difficulty, string> = {
+    Easy: "bg-[#16c784]/10 text-[#16c784] border-[#16c784]/25",
+    Medium: "bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/25",
+    Hard: "bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/25",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors",
+        "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold border transition-colors",
         styles[difficulty],
         className
       )}

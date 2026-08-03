@@ -10,11 +10,16 @@ interface PaginationProps {
   className?: string;
 }
 
-export default function Pagination({ currentPage, totalPages, onPageChange, className }: PaginationProps) {
+export default function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  className,
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: number[] = [];
     const maxVisible = 5;
 
     if (totalPages <= maxVisible) {
@@ -37,14 +42,20 @@ export default function Pagination({ currentPage, totalPages, onPageChange, clas
   };
 
   return (
-    <div className={cn("flex items-center justify-center gap-1 py-2", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center gap-1.5 py-3",
+        className
+      )}
+    >
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         aria-label="Previous page"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">Previous</span>
       </button>
 
       {getPageNumbers().map((p) => (
@@ -52,9 +63,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange, clas
           key={p}
           onClick={() => onPageChange(p)}
           className={cn(
-            "h-8 w-8 text-sm font-semibold rounded-lg transition-all duration-200",
+            "h-8 w-8 text-sm font-bold rounded-lg transition-all duration-200",
             currentPage === p
-              ? "bg-primary text-primary-foreground"
+              ? "bg-primary text-primary-foreground shadow-sm"
               : "border border-border bg-card hover:bg-secondary text-muted-foreground hover:text-foreground"
           )}
         >
@@ -65,11 +76,16 @@ export default function Pagination({ currentPage, totalPages, onPageChange, clas
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         aria-label="Next page"
       >
-        <ChevronRight className="h-4 w-4" />
+        <span className="hidden sm:inline">Next</span>
+        <ChevronRight className="h-3.5 w-3.5" />
       </button>
+
+      <span className="hidden md:flex text-xs text-muted-foreground font-medium ml-2 select-none">
+        Page {currentPage} of {totalPages}
+      </span>
     </div>
   );
 }

@@ -6,12 +6,25 @@ import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/common/ScrollToTop";
 
 export const metadata: Metadata = {
-  title: "LeetDSA Sheets - Company Wise LeetCode DSA Sheets",
-  description: "Solve curated LeetCode DSA questions asked by top tech companies like Google, Amazon, Microsoft, and Facebook.",
-  keywords: ["LeetCode", "DSA", "Data Structures", "Algorithms", "Interview Preparation", "Google", "Amazon", "Microsoft"],
+  title: "Interview Atlas — Master Company-wise Interview Preparation",
+  description:
+    "Solve 14,000+ curated LeetCode questions asked in interviews at 470+ top tech companies like Google, Amazon, Microsoft, and Meta. Track progress, bookmark problems, and ace your next interview.",
+  keywords: [
+    "LeetCode",
+    "DSA",
+    "Data Structures",
+    "Algorithms",
+    "Interview Preparation",
+    "Google",
+    "Amazon",
+    "Microsoft",
+    "Interview Atlas",
+    "Company Wise",
+  ],
   openGraph: {
-    title: "LeetDSA Sheets - Company Wise LeetCode DSA Sheets",
-    description: "Solve curated LeetCode DSA questions asked by top tech companies.",
+    title: "Interview Atlas — Master Company-wise Interview Preparation",
+    description:
+      "14,000+ curated questions from 470+ top tech companies. Free forever.",
     type: "website",
   },
 };
@@ -25,6 +38,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="flex flex-col min-h-screen bg-background text-foreground">
         <Providers>

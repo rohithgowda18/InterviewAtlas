@@ -10,78 +10,124 @@ interface CompanyCardProps {
   company: Company;
 }
 
+const GRADIENTS = [
+  { from: "from-blue-600", to: "to-cyan-500", ring: "ring-blue-500/20" },
+  { from: "from-violet-600", to: "to-purple-500", ring: "ring-violet-500/20" },
+  { from: "from-emerald-600", to: "to-teal-500", ring: "ring-emerald-500/20" },
+  { from: "from-orange-600", to: "to-amber-500", ring: "ring-orange-500/20" },
+  { from: "from-rose-600", to: "to-pink-500", ring: "ring-rose-500/20" },
+  { from: "from-indigo-600", to: "to-blue-500", ring: "ring-indigo-500/20" },
+];
+
+function getGradient(name: string) {
+  let sum = 0;
+  for (let i = 0; i < name.length; i++) sum += name.charCodeAt(i);
+  return GRADIENTS[sum % GRADIENTS.length];
+}
+
+function FreqBar({
+  value,
+  total,
+  color,
+}: {
+  value: number;
+  total: number;
+  color: string;
+}) {
+  const pct = total > 0 ? (value / total) * 100 : 0;
+  return (
+    <div
+      style={{ width: `${pct}%`, background: color }}
+      className="h-full first:rounded-l-full last:rounded-r-full"
+      title={`${value} (${pct.toFixed(0)}%)`}
+    />
+  );
+}
+
 export default function CompanyCard({ company }: CompanyCardProps) {
-  const getGradient = (name: string) => {
-    const gradients = [
-      "from-blue-600 to-cyan-500",
-      "from-purple-600 to-pink-500",
-      "from-emerald-600 to-teal-500",
-      "from-orange-600 to-amber-500",
-      "from-rose-600 to-purple-500",
-      "from-indigo-600 to-blue-500",
-    ];
-    let sum = 0;
-    for (let i = 0; i < name.length; i++) {
-      sum += name.charCodeAt(i);
-    }
-    return gradients[sum % gradients.length];
-  };
-
-  const gradientClass = getGradient(company.name);
-
+  const gradient = getGradient(company.name);
   const total = company.totalQuestions || 1;
-  const easyPct = (company.difficultyCounts.Easy / total) * 100;
-  const mediumPct = (company.difficultyCounts.Medium / total) * 100;
-  const hardPct = (company.difficultyCounts.Hard / total) * 100;
+  const easy = company.difficultyCounts.Easy;
+  const medium = company.difficultyCounts.Medium;
+  const hard = company.difficultyCounts.Hard;
+
+  const easyPct = Math.round((easy / total) * 100);
+  const mediumPct = Math.round((medium / total) * 100);
+  const hardPct = Math.round((hard / total) * 100);
 
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.01 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-white/70 dark:bg-black/70 backdrop-blur-lg p-6 shadow-sm hover:shadow-xl transition-all"
+      whileHover={{ y: -3, scale: 1.01 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="group relative flex flex-col rounded-xl border border-border/80 bg-white/70 dark:bg-black/70 backdrop-blur-lg p-5 shadow-sm hover:shadow-lg hover:border-border transition-all duration-200"
     >
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-6">
-          <div
-            className={`h-12 w-12 rounded-xl bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-extrabold text-xl shadow-sm`}
-          >
-            {company.name.charAt(0)}
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <h3 className="font-extrabold text-lg text-foreground tracking-tight group-hover:text-primary transition-colors">
-              {company.name}
-            </h3>
-
-          </div>
-        </div>
-
-        {/* Difficulty distribution progress bar */}
-        <div className="flex flex-col gap-1">
-          <div className="flex h-1 w-full overflow-hidden rounded-full bg-secondary/50">
-            <div style={{ width: `${easyPct}%` }} className="bg-emerald-500" title={`Easy: ${company.difficultyCounts.Easy}`} />
-            <div style={{ width: `${mediumPct}%` }} className="bg-amber-500" title={`Medium: ${company.difficultyCounts.Medium}`} />
-            <div style={{ width: `${hardPct}%` }} className="bg-rose-500" title={`Hard: ${company.difficultyCounts.Hard}`} />
-          </div>
-          
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-semibold">
-            <span>TOTAL QUESTIONS</span>
-            <span className="text-foreground font-bold">{company.totalQuestions}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <Link
-          href={`/company/${company.slug}`}
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div
           className={cn(
-                  "px-5 py-3 font-bold text-sm border-b-2 whitespace-nowrap transition-all duration-200",
-                  "border-transparent text-muted-foreground hover:text-foreground"
-                )}
+            "h-11 w-11 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-extrabold text-lg shadow-sm flex-shrink-0",
+            gradient.from,
+            gradient.to
+          )}
         >
-          <span>Open Sheet</span>
-          <ChevronRight className="h-3.5 w-3.5 ml-1 transform group-hover:translate-x-0.5 transition-transform" />
-        </Link>
+          {company.name.charAt(0)}
+        </div>
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <h3 className="font-extrabold text-sm text-foreground tracking-tight group-hover:text-primary transition-colors truncate">
+            {company.name}
+          </h3>
+          <span className="text-xs text-muted-foreground font-medium">
+            {total} Questions
+          </span>
+        </div>
       </div>
+
+      {/* Difficulty breakdown — counts */}
+      <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] font-bold text-[#16c784]">{easyPct}%</span>
+          <span className="text-[10px] text-muted-foreground">Easy</span>
+        </div>
+        <span className="text-border">·</span>
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] font-bold text-[#f59e0b]">{mediumPct}%</span>
+          <span className="text-[10px] text-muted-foreground">Med</span>
+        </div>
+        <span className="text-border">·</span>
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] font-bold text-[#ef4444]">{hardPct}%</span>
+          <span className="text-[10px] text-muted-foreground">Hard</span>
+        </div>
+      </div>
+
+      {/* Difficulty absolute counts */}
+      <div className="flex gap-1.5 mb-3">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#16c784]/10 border border-[#16c784]/20 text-[#16c784] text-[10px] font-bold">
+          {easy} E
+        </span>
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/20 text-[#f59e0b] text-[10px] font-bold">
+          {medium} M
+        </span>
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#ef4444] text-[10px] font-bold">
+          {hard} H
+        </span>
+      </div>
+
+      {/* Segmented progress bar */}
+      <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-secondary/50 mb-4">
+        <FreqBar value={easy} total={total} color="#16c784" />
+        <FreqBar value={medium} total={total} color="#f59e0b" />
+        <FreqBar value={hard} total={total} color="#ef4444" />
+      </div>
+
+      {/* Open Sheet button */}
+      <Link
+        href={`/company/${company.slug}`}
+        className="mt-auto flex items-center justify-between w-full px-3.5 py-2 rounded-lg bg-secondary/50 hover:bg-secondary border border-border/60 group-hover:border-border text-xs font-bold text-foreground transition-all duration-200"
+      >
+        <span>Open Sheet</span>
+        <ChevronRight className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 transition-transform" />
+      </Link>
     </motion.div>
   );
 }
