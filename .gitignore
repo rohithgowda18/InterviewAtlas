@@ -22,3 +22,6 @@ yarn-error.log
 # Misc
 .DS_Store
 
+# Ignore raw CSV data and generator scripts
+companies/
+scripts/
