@@ -26,3 +26,7 @@ out/
 
 # Ignore documentation folder
 /doc/
+
+# Ignore generated folders
+generated-v2/
+generated-v3/
