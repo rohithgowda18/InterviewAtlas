@@ -58,24 +58,26 @@ export default function Pagination({
         <span className="hidden sm:inline">Previous</span>
       </button>
 
-      {getPageNumbers().map((p) => (
+      {getPageNumbers().map((page) => (
         <button
-          key={p}
-          onClick={() => onPageChange(p)}
+          key={page}
+          onClick={() => onPageChange(page)}
+          suppressHydrationWarning
           className={cn(
             "h-8 w-8 text-sm font-bold rounded-lg transition-all duration-200",
-            currentPage === p
+            currentPage === page
               ? "bg-primary text-primary-foreground shadow-sm"
               : "border border-border bg-card hover:bg-secondary text-muted-foreground hover:text-foreground"
           )}
         >
-          {p}
+          {page}
         </button>
       ))}
 
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        suppressHydrationWarning
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         aria-label="Next page"
       >

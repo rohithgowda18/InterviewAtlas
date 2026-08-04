@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Github, BookOpen, Star } from "lucide-react";
 import ThemeToggle from "@/components/common/ThemeToggle";
+import PWAInstallButton from "@/components/common/PWAInstallButton";
 
 export default function Navbar() {
   return (
@@ -20,7 +21,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <PWAInstallButton />
           <a
             href="https://github.com/rohithgowda18/InterviewAtlas"
             target="_blank"
@@ -29,7 +31,7 @@ export default function Navbar() {
           >
             <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
             <Github className="h-3.5 w-3.5 text-foreground ml-0.5" />
-            <span>Star on GitHub</span>
+            <span className="hidden sm:inline">Star on GitHub</span>
           </a>
           <ThemeToggle />
         </div>

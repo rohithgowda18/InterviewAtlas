@@ -31,6 +31,7 @@ export default function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        suppressHydrationWarning
         className="w-full pl-10 pr-24 py-2.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/70 text-sm focus:outline-none transition-all"
       />
       <div className="absolute right-2 flex items-center gap-1.5">
