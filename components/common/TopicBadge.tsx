@@ -13,10 +13,10 @@ export default function TopicBadge({ topic, onClick, active, className }: TopicB
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded-md text-xs transition-all duration-200",
+        "inline-flex items-center px-2.5 py-1 rounded-md text-xs sm:text-sm font-medium transition-all duration-200",
         onClick ? "cursor-pointer" : "cursor-default",
         active
-          ? "bg-primary text-primary-foreground font-medium shadow-sm"
+          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
           : "bg-secondary/40 text-muted-foreground border border-border hover:bg-secondary/80 hover:text-foreground",
         className
       )}

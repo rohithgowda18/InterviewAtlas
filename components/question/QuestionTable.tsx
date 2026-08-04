@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ExternalLink, FileText, Bookmark, CheckSquare } from "lucide-react";
 import { Question } from "@/types";
 import DifficultyBadge from "@/components/common/DifficultyBadge";
@@ -19,27 +19,27 @@ interface QuestionTableProps {
 function FrequencyLabel({ freq }: { freq: number }) {
   if (freq >= 75) {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 border border-rose-500/20 text-rose-400">
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-bold bg-rose-500/10 border border-rose-500/20 text-rose-400">
         Hot
       </span>
     );
   }
   if (freq >= 45) {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400">
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400">
         High
       </span>
     );
   }
   if (freq >= 20) {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 border border-blue-500/20 text-blue-400">
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-bold bg-blue-500/10 border border-blue-500/20 text-blue-400">
         Med
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary border border-border text-muted-foreground">
+    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-bold bg-secondary border border-border text-muted-foreground">
       Low
     </span>
   );
@@ -74,24 +74,24 @@ function QuestionCard({
   return (
     <div
       className={cn(
-        "p-4 border-b border-border/60 transition-colors duration-150",
+        "p-5 border-b border-border/60 transition-colors duration-150",
         isSolved && "bg-[#16c784]/[0.03]",
         focused && "bg-indigo-500/[0.05] border-l-2 border-l-indigo-500"
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3.5">
         {/* Checkbox */}
         <button
           onClick={onToggleSolved}
           className={cn(
-            "flex-shrink-0 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 mt-0.5",
+            "flex-shrink-0 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 mt-0.5",
             isSolved
               ? "bg-[#16c784] border-[#16c784] text-white"
               : "border-border hover:border-[#16c784]/50"
           )}
           aria-label={`Mark "${q.title}" as solved`}
         >
-          {isSolved && <CheckSquare className="h-3 w-3" />}
+          {isSolved && <CheckSquare className="h-3.5 w-3.5" />}
         </button>
 
         <div className="flex-1 min-w-0">
@@ -101,7 +101,7 @@ function QuestionCard({
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "font-bold text-sm text-foreground hover:text-indigo-400 transition-colors line-clamp-2",
+              "font-semibold text-base sm:text-lg hover:text-indigo-400 transition-colors line-clamp-2",
               isSolved && "line-through text-muted-foreground"
             )}
           >
@@ -109,10 +109,10 @@ function QuestionCard({
           </a>
 
           {/* Badges row */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-2">
+          <div className="flex flex-wrap items-center gap-2 mt-2.5">
             {!hideStats && <DifficultyBadge difficulty={q.difficulty} />}
             {hideStats && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border bg-secondary/35 text-muted-foreground/80 border-border">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-semibold border bg-secondary/35 text-muted-foreground/80 border-border">
                 ?
               </span>
             )}
@@ -120,12 +120,12 @@ function QuestionCard({
           </div>
 
           {/* Topics */}
-          <div className="flex flex-wrap gap-1 mt-2">
+          <div className="flex flex-wrap gap-1.5 mt-2.5">
             {q.topics.slice(0, 3).map((t) => (
               <TopicBadge key={t} topic={t} />
             ))}
             {q.topics.length > 3 && (
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground font-medium self-center">
                 +{q.topics.length - 3}
               </span>
             )}
@@ -133,11 +133,11 @@ function QuestionCard({
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-col gap-1.5 flex-shrink-0">
+        <div className="flex flex-col gap-2 flex-shrink-0">
           <button
             onClick={onToggleBookmarked}
             className={cn(
-              "h-7 w-7 flex items-center justify-center rounded-lg border transition-all duration-200",
+              "h-8 w-8 flex items-center justify-center rounded-lg border transition-all duration-200",
               isBookmarked
                 ? "bg-amber-500/10 border-amber-500/30 text-amber-500"
                 : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -145,7 +145,7 @@ function QuestionCard({
           >
             <Bookmark
               className={cn(
-                "h-3.5 w-3.5",
+                "h-4 w-4",
                 isBookmarked && "fill-amber-500"
               )}
             />
@@ -154,25 +154,25 @@ function QuestionCard({
             href={q.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="h-7 w-7 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+            className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
             aria-label={`Solve "${q.title}" on LeetCode`}
           >
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ExternalLink className="h-4 w-4" />
           </a>
         </div>
       </div>
 
       {/* Notes */}
       {isNotesExpanded && (
-        <div className="mt-3 ml-8 bg-secondary/10 rounded-lg p-3 border border-border/70">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">
+        <div className="mt-3.5 ml-9 bg-secondary/10 rounded-lg p-3.5 border border-border/70">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">
             My Notes
           </span>
           <textarea
             value={noteText}
             onChange={(e) => setNote(q.id, e.target.value)}
             placeholder="Write approach, complexity, tips..."
-            className="w-full min-h-[70px] p-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-all"
+            className="w-full min-h-[75px] p-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-all"
           />
         </div>
       )}
@@ -248,19 +248,19 @@ export default function QuestionTable({
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-border bg-secondary/20 text-[10px] font-bold text-muted-foreground uppercase tracking-wider sticky top-0 z-10 select-none">
-              <th className="py-2.5 px-3 w-10 text-center">#</th>
-              <th className="py-2.5 px-3 min-w-[220px]">Title</th>
-              <th className="py-2.5 px-3 min-w-[200px]">Topics</th>
-              <th className="py-2.5 px-3 w-24">Difficulty</th>
-              <th className="py-2.5 px-3 w-20 text-center">Freq</th>
-              <th className="py-2.5 px-3 w-9 text-center">
-                <FileText className="h-3.5 w-3.5 inline" />
+            <tr className="border-b border-border bg-secondary/20 text-xs font-bold text-muted-foreground uppercase tracking-wider sticky top-0 z-10 select-none">
+              <th className="py-3 px-4 w-12 text-center">#</th>
+              <th className="py-3 px-4 min-w-[260px]">Title</th>
+              <th className="py-3 px-4 min-w-[220px]">Topics</th>
+              <th className="py-3 px-4 w-28">Difficulty</th>
+              <th className="py-3 px-4 w-24 text-center">Freq</th>
+              <th className="py-3 px-4 w-11 text-center">
+                <FileText className="h-4 w-4 inline" />
               </th>
-              <th className="py-2.5 px-3 w-9 text-center">
-                <Bookmark className="h-3.5 w-3.5 inline" />
+              <th className="py-3 px-4 w-11 text-center">
+                <Bookmark className="h-4 w-4 inline" />
               </th>
-              <th className="py-2.5 px-3 w-9 text-center">↗</th>
+              <th className="py-3 px-4 w-11 text-center">↗</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/50">
@@ -273,9 +273,8 @@ export default function QuestionTable({
               const isFocused = focusedIdx === idx;
 
               return (
-                <>
+                <React.Fragment key={q.id}>
                   <tr
-                    key={q.id}
                     onClick={() => setFocusedIdx(idx)}
                     className={cn(
                       "group transition-colors duration-100 cursor-pointer",
@@ -287,14 +286,14 @@ export default function QuestionTable({
                     )}
                   >
                     {/* Solved checkbox */}
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-4 px-4 text-center">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleSolved(q.id);
                         }}
                         className={cn(
-                          "h-5 w-5 rounded-full border-2 flex items-center justify-center mx-auto transition-all duration-200",
+                          "h-6 w-6 rounded-full border-2 flex items-center justify-center mx-auto transition-all duration-200",
                           isSolved
                             ? "bg-[#16c784] border-[#16c784] text-white"
                             : "border-border hover:border-[#16c784]/50"
@@ -303,7 +302,7 @@ export default function QuestionTable({
                       >
                         {isSolved && (
                           <svg
-                            className="h-2.5 w-2.5"
+                            className="h-3 w-3"
                             viewBox="0 0 12 12"
                             fill="currentColor"
                           >
@@ -314,14 +313,14 @@ export default function QuestionTable({
                     </td>
 
                     {/* Title */}
-                    <td className="py-2.5 px-3">
+                    <td className="py-4 px-4">
                       <a
                         href={q.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className={cn(
-                          "font-bold text-sm hover:text-indigo-400 transition-colors",
+                          "font-semibold text-base lg:text-lg hover:text-indigo-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis block max-w-md lg:max-w-lg",
                           isSolved
                             ? "line-through text-muted-foreground"
                             : "text-foreground"
@@ -332,13 +331,13 @@ export default function QuestionTable({
                     </td>
 
                     {/* Topics */}
-                    <td className="py-2.5 px-3">
-                      <div className="flex flex-wrap gap-1 max-w-xs">
+                    <td className="py-4 px-4">
+                      <div className="flex flex-wrap gap-1.5 max-w-xs">
                         {q.topics.slice(0, 3).map((t) => (
                           <TopicBadge key={t} topic={t} />
                         ))}
                         {q.topics.length > 3 && (
-                          <span className="text-[10px] text-muted-foreground self-center">
+                          <span className="text-xs text-muted-foreground font-medium self-center">
                             +{q.topics.length - 3}
                           </span>
                         )}
@@ -346,9 +345,9 @@ export default function QuestionTable({
                     </td>
 
                     {/* Difficulty */}
-                    <td className="py-2.5 px-3">
+                    <td className="py-4 px-4">
                       {hideStats ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border bg-secondary/35 text-muted-foreground/80 border-border select-none">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-semibold border bg-secondary/35 text-muted-foreground/80 border-border select-none">
                           ?
                         </span>
                       ) : (
@@ -357,42 +356,42 @@ export default function QuestionTable({
                     </td>
 
                     {/* Frequency */}
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-4 px-4 text-center">
                       {hideStats ? (
-                        <span className="text-muted-foreground text-xs">—</span>
+                        <span className="text-muted-foreground text-sm">—</span>
                       ) : (
                         <FrequencyLabel freq={q.frequency} />
                       )}
                     </td>
 
                     {/* Notes button */}
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-4 px-4 text-center">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleNotes(q.id);
                         }}
                         className={cn(
-                          "p-1.5 rounded-lg border transition-all duration-200",
+                          "p-2 rounded-lg border transition-all duration-200",
                           noteText
                             ? "bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
                             : "border-border text-muted-foreground hover:bg-secondary hover:text-foreground"
                         )}
                         title={noteText ? "Edit notes" : "Add notes"}
                       >
-                        <FileText className="h-3.5 w-3.5" />
+                        <FileText className="h-4 w-4" />
                       </button>
                     </td>
 
                     {/* Bookmark */}
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-4 px-4 text-center">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleBookmarked(q.id);
                         }}
                         className={cn(
-                          "p-1.5 rounded-lg border transition-all duration-200",
+                          "p-2 rounded-lg border transition-all duration-200",
                           isBookmarked
                             ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20"
                             : "border-border text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -401,7 +400,7 @@ export default function QuestionTable({
                       >
                         <Bookmark
                           className={cn(
-                            "h-3.5 w-3.5",
+                            "h-4 w-4",
                             isBookmarked && "fill-amber-500"
                           )}
                         />
@@ -409,16 +408,16 @@ export default function QuestionTable({
                     </td>
 
                     {/* External link */}
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-4 px-4 text-center">
                       <a
                         href={q.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="p-1.5 rounded-lg border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 inline-flex items-center justify-center"
+                        className="p-2 rounded-lg border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 inline-flex items-center justify-center"
                         aria-label={`Open "${q.title}" on LeetCode`}
                       >
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <ExternalLink className="h-4 w-4" />
                       </a>
                     </td>
                   </tr>
@@ -441,7 +440,7 @@ export default function QuestionTable({
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               );
             })}
           </tbody>

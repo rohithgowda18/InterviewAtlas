@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Github, BookOpen } from "lucide-react";
+import { Github, BookOpen, Star } from "lucide-react";
 import ThemeToggle from "@/components/common/ThemeToggle";
 
 export default function Navbar() {
@@ -22,13 +22,14 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com/rohithgowda18"
+            href="https://github.com/rohithgowda18/InterviewAtlas"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg border border-border hover:bg-secondary/50"
+            className="flex items-center gap-1.5 text-xs font-semibold text-amber-500 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-colors px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 shadow-sm"
           >
-            <Github className="h-3.5 w-3.5" />
-            <span>GitHub</span>
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            <Github className="h-3.5 w-3.5 text-foreground ml-0.5" />
+            <span>Star on GitHub</span>
           </a>
           <ThemeToggle />
         </div>

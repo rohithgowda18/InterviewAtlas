@@ -16,7 +16,7 @@ export default function DifficultyBadge({ difficulty, className }: DifficultyBad
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold border transition-colors",
+        "inline-flex items-center px-2.5 py-1 rounded-full text-xs sm:text-sm font-semibold border transition-colors",
         styles[difficulty],
         className
       )}

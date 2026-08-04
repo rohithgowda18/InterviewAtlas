@@ -22,7 +22,7 @@ interface FiltersProps {
 }
 
 const selectClass =
-  "h-8 px-2.5 pr-7 rounded-lg border border-border bg-secondary/40 text-foreground text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-ring transition-all appearance-none cursor-pointer hover:bg-secondary";
+  "h-8 px-2.5 pr-7 rounded-lg border border-border bg-secondary/40 text-foreground text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-ring transition-all appearance-none cursor-pointer hover:bg-secondary [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 font-medium";
 
 export default function Filters({
   difficulty,
