@@ -10,6 +10,8 @@ import { History, X } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { CompanyGridSkeleton } from "@/components/common/Skeleton";
+
 interface CompanyGridProps {
   companies: readonly Company[];
   totalQuestions: number;
@@ -19,7 +21,7 @@ export default function CompanyGrid({
   companies,
   totalQuestions,
 }: CompanyGridProps) {
-  const { recentlyVisited, clearRecentlyVisited } = useDSA();
+  const { recentlyVisited, clearRecentlyVisited, isHydrated } = useDSA();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSticky, setIsSticky] = useState(false);
@@ -158,7 +160,9 @@ export default function CompanyGrid({
       </AnimatePresence>
 
       {/* Companies grid */}
-      {paginatedCompanies.length > 0 ? (
+      {!isHydrated ? (
+        <CompanyGridSkeleton count={12} />
+      ) : paginatedCompanies.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {paginatedCompanies.map((company, idx) => (
             <motion.div

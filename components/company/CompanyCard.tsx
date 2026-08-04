@@ -59,10 +59,10 @@ export default function CompanyCard({ company }: CompanyCardProps) {
     <motion.div
       whileHover={{ y: -3, scale: 1.01 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className="group relative flex flex-col rounded-xl border border-border/80 bg-white/70 dark:bg-black/70 backdrop-blur-lg p-5 shadow-sm hover:shadow-lg hover:border-border transition-all duration-200"
+      className="group relative flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3.5">
         <div
           className={cn(
             "h-11 w-11 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-extrabold text-lg shadow-sm flex-shrink-0",
@@ -83,7 +83,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
       </div>
 
       {/* Difficulty breakdown — counts */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-2.5">
         <div className="flex items-center gap-1">
           <span className="text-[10px] font-bold text-[#16c784]">{easyPct}%</span>
           <span className="text-[10px] text-muted-foreground">Easy</span>
@@ -102,19 +102,19 @@ export default function CompanyCard({ company }: CompanyCardProps) {
 
       {/* Difficulty absolute counts */}
       <div className="flex gap-1.5 mb-3">
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#16c784]/10 border border-[#16c784]/20 text-[#16c784] text-[10px] font-bold">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#16c784]/15 border border-[#16c784]/30 text-[#16c784] text-[10px] font-bold">
           {easy} E
         </span>
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/20 text-[#f59e0b] text-[10px] font-bold">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f59e0b]/15 border border-[#f59e0b]/30 text-[#f59e0b] text-[10px] font-bold">
           {medium} M
         </span>
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#ef4444] text-[10px] font-bold">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ef4444]/15 border border-[#ef4444]/30 text-[#ef4444] text-[10px] font-bold">
           {hard} H
         </span>
       </div>
 
-      {/* Segmented progress bar */}
-      <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-secondary/50 mb-4">
+      {/* Segmented progress bar (8px thick) */}
+      <div className="flex h-2 w-full overflow-hidden rounded-full bg-secondary/80 mb-3.5">
         <FreqBar value={easy} total={total} color="#16c784" />
         <FreqBar value={medium} total={total} color="#f59e0b" />
         <FreqBar value={hard} total={total} color="#ef4444" />

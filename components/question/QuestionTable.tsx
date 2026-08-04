@@ -5,6 +5,7 @@ import { ExternalLink, FileText, Bookmark, CheckSquare } from "lucide-react";
 import { Question } from "@/types";
 import DifficultyBadge from "@/components/common/DifficultyBadge";
 import TopicBadge from "@/components/common/TopicBadge";
+import OverflowTopicChip from "@/components/common/OverflowTopicChip";
 import { useDSA } from "@/hooks/useDSA";
 import { cn } from "@/lib/utils";
 
@@ -332,14 +333,15 @@ export default function QuestionTable({
 
                     {/* Topics */}
                     <td className="py-4 px-4">
-                      <div className="flex flex-wrap gap-1.5 max-w-xs">
+                      <div className="flex flex-wrap items-center gap-1.5 max-w-xs">
                         {q.topics.slice(0, 3).map((t) => (
                           <TopicBadge key={t} topic={t} />
                         ))}
                         {q.topics.length > 3 && (
-                          <span className="text-xs text-muted-foreground font-medium self-center">
-                            +{q.topics.length - 3}
-                          </span>
+                          <OverflowTopicChip
+                            hiddenTopics={q.topics.slice(3)}
+                            totalHidden={q.topics.length - 3}
+                          />
                         )}
                       </div>
                     </td>

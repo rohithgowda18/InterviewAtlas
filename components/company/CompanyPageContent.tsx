@@ -29,6 +29,8 @@ import {
   BarChart2,
 } from "lucide-react";
 
+import { QuestionTableSkeleton, StatsCardsSkeleton } from "@/components/common/Skeleton";
+
 interface CompanyPageContentProps {
   companyName: string;
   companySlug: string;
@@ -54,6 +56,7 @@ export default function CompanyPageContent({
     addRecentlyVisited,
     practiceMode,
     togglePracticeMode,
+    isHydrated,
   } = useDSA();
 
   useEffect(() => {
@@ -320,63 +323,67 @@ export default function CompanyPageContent({
         </div>
 
         {/* Stats tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {/* Progress circle tile */}
-          <div className="col-span-2 sm:col-span-1 flex items-center justify-center p-3 rounded-xl border border-border bg-secondary/20">
-            <ProgressCircle
-              percentage={solvedPercentage}
-              size={72}
-              strokeWidth={6}
-              label="Solved"
-              sublabel={`${companySolvedCount}/${totalQ}`}
-              color="#16c784"
-            />
-          </div>
+        {!isHydrated ? (
+          <StatsCardsSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {/* Progress circle tile */}
+            <div className="col-span-2 sm:col-span-1 flex items-center justify-center p-3 rounded-xl border border-border bg-secondary/20">
+              <ProgressCircle
+                percentage={solvedPercentage}
+                size={72}
+                strokeWidth={6}
+                label="Solved"
+                sublabel={`${companySolvedCount}/${totalQ}`}
+                color="#16c784"
+              />
+            </div>
 
-          {/* Stat: Total */}
-          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-secondary/20 gap-0.5">
-            <BarChart2 className="h-4 w-4 text-muted-foreground mb-1" />
-            <span className="text-xl font-extrabold text-foreground">{totalQ}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
-              Total
-            </span>
-          </div>
+            {/* Stat: Total */}
+            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-secondary/20 gap-0.5">
+              <BarChart2 className="h-4 w-4 text-muted-foreground mb-1" />
+              <span className="text-xl font-extrabold text-foreground">{totalQ}</span>
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                Total
+              </span>
+            </div>
 
-          {/* Stat: Easy */}
-          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#16c784]/20 bg-[#16c784]/5 gap-0.5">
-            <span className="text-xl font-extrabold text-[#16c784]">{easyCount}</span>
-            <span className="text-[10px] font-bold text-[#16c784]/70 uppercase tracking-wide">
-              Easy
-            </span>
-          </div>
+            {/* Stat: Easy */}
+            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#16c784]/20 bg-[#16c784]/5 gap-0.5">
+              <span className="text-xl font-extrabold text-[#16c784]">{easyCount}</span>
+              <span className="text-[10px] font-bold text-[#16c784]/70 uppercase tracking-wide">
+                Easy
+              </span>
+            </div>
 
-          {/* Stat: Medium */}
-          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 gap-0.5">
-            <span className="text-xl font-extrabold text-[#f59e0b]">{mediumCount}</span>
-            <span className="text-[10px] font-bold text-[#f59e0b]/70 uppercase tracking-wide">
-              Medium
-            </span>
-          </div>
+            {/* Stat: Medium */}
+            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 gap-0.5">
+              <span className="text-xl font-extrabold text-[#f59e0b]">{mediumCount}</span>
+              <span className="text-[10px] font-bold text-[#f59e0b]/70 uppercase tracking-wide">
+                Medium
+              </span>
+            </div>
 
-          {/* Stat: Hard */}
-          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#ef4444]/20 bg-[#ef4444]/5 gap-0.5">
-            <span className="text-xl font-extrabold text-[#ef4444]">{hardCount}</span>
-            <span className="text-[10px] font-bold text-[#ef4444]/70 uppercase tracking-wide">
-              Hard
-            </span>
-          </div>
+            {/* Stat: Hard */}
+            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-[#ef4444]/20 bg-[#ef4444]/5 gap-0.5">
+              <span className="text-xl font-extrabold text-[#ef4444]">{hardCount}</span>
+              <span className="text-[10px] font-bold text-[#ef4444]/70 uppercase tracking-wide">
+                Hard
+              </span>
+            </div>
 
-          {/* Stat: Bookmarks */}
-          <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-500/20 bg-amber-500/5 gap-0.5">
-            <Bookmark className="h-4 w-4 text-amber-500 mb-0.5" />
-            <span className="text-xl font-extrabold text-amber-500">
-              {companyBookmarkedCount}
-            </span>
-            <span className="text-[10px] font-bold text-amber-500/70 uppercase tracking-wide">
-              Saved
-            </span>
+            {/* Stat: Bookmarked */}
+            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-500/20 bg-amber-500/5 gap-0.5">
+              <Bookmark className="h-4 w-4 text-amber-500 mb-1" />
+              <span className="text-xl font-extrabold text-amber-500">
+                {companyBookmarkedCount}
+              </span>
+              <span className="text-[10px] font-bold text-amber-500/70 uppercase tracking-wide">
+                Saved
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -455,13 +462,17 @@ export default function CompanyPageContent({
             Press <kbd className="bg-secondary border border-border rounded px-1 font-mono text-[10px]">?</kbd> for shortcuts
           </span>
         </div>
-        <QuestionTable
-          questions={paginatedQuestions}
-          solvedIds={solvedIdsSet}
-          bookmarkedIds={bookmarkedIdsSet}
-          toggleSolved={toggleSolved}
-          toggleBookmarked={toggleBookmarked}
-        />
+        {!isHydrated ? (
+          <QuestionTableSkeleton rows={10} />
+        ) : (
+          <QuestionTable
+            questions={paginatedQuestions}
+            solvedIds={solvedIdsSet}
+            bookmarkedIds={bookmarkedIdsSet}
+            toggleSolved={toggleSolved}
+            toggleBookmarked={toggleBookmarked}
+          />
+        )}
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
