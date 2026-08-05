@@ -90,6 +90,7 @@ export default function CompanyPageContent({
   >("frequency");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const itemsPerPage = 20;
   const tabsRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
