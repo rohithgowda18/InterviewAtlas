@@ -9,7 +9,7 @@ const PRECACHE_ASSETS = [
 ];
 
 // Installation: Pre-cache static shell & assets
-self.addEventListener("install", (event: any) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
   );
@@ -17,7 +17,7 @@ self.addEventListener("install", (event: any) => {
 });
 
 // Activation: Clean up legacy caches & claim clients
-self.addEventListener("activate", (event: any) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -33,7 +33,7 @@ self.addEventListener("activate", (event: any) => {
 });
 
 // Fetch Strategy: Stale-While-Revalidate for application assets
-self.addEventListener("fetch", (event: any) => {
+self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   const url = new URL(event.request.url);
