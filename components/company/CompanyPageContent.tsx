@@ -435,7 +435,11 @@ export default function CompanyPageContent({
           return (
             <button
               key={tab.key}
-              onClick={() => handleTabChange(tab.key)}
+              type="button"
+              onClick={(e) => {
+                e.currentTarget.blur();
+                handleTabChange(tab.key);
+              }}
               className={cn(
                 "px-4 py-2.5 font-bold text-sm border-b-2 whitespace-nowrap transition-all duration-200 flex items-center gap-1.5",
                 activeTab === tab.key
@@ -488,7 +492,7 @@ export default function CompanyPageContent({
       </div>
 
       {/* Table view */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 min-h-[600px]">
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground font-semibold">
             Showing{" "}
