@@ -21,12 +21,8 @@ out/
 # Ignore ONLY the root CSV folder
 /companies/
 
-# Ignore ONLY the root scripts folder
-/scripts/
-
 # Ignore documentation folder
 /doc/
 
 # Ignore generated folders
 generated-v2/
-generated-v3/

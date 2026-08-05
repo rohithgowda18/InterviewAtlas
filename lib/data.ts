@@ -18,7 +18,7 @@ export function getTopicsList(): readonly string[] {
   return topics;
 }
 
-// Dynamically import the individual company's compiled TS module at runtime
+// Dynamically import the individual company's compiled TS module at runtime from V1
 export async function getCompanyData(slug: string): Promise<CompanyData | null> {
   try {
     const compModule = await import(`@/generated/companies/${slug}`);

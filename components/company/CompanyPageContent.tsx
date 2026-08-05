@@ -27,9 +27,12 @@ import {
   CheckCircle2,
   Bookmark,
   BarChart2,
+  Play,
 } from "lucide-react";
 
 import { QuestionTableSkeleton, StatsCardsSkeleton } from "@/components/common/Skeleton";
+import CompanyAnalyticsSection from "@/components/company/CompanyAnalyticsSection";
+import InterviewSimulatorModal from "@/components/company/InterviewSimulatorModal";
 
 interface CompanyPageContentProps {
   companyName: string;
@@ -87,7 +90,12 @@ export default function CompanyPageContent({
   >("frequency");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const itemsPerPage = 20;
+
+  const handleTopicClickFromAnalytics = useCallback((topicName: string) => {
+    setTopic(topicName.toLowerCase());
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -256,7 +264,7 @@ export default function CompanyPageContent({
   ] as const;
 
   return (
-    <div className="flex flex-col gap-6 w-full py-2">
+    <div className="flex flex-col gap-6 w-full py-2 animate-fade-in">
       {/* ===== DASHBOARD HEADER ===== */}
       <div className="rounded-2xl border border-border bg-card/60 p-5 md:p-6 flex flex-col gap-5">
         {/* Top row: logo + name + actions */}
@@ -277,6 +285,14 @@ export default function CompanyPageContent({
 
           {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setIsSimulatorOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-extrabold rounded-lg bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white shadow-sm transition-all duration-200 cursor-pointer"
+            >
+              <Play className="h-3.5 w-3.5 fill-white" />
+              <span>Interview Simulator</span>
+            </button>
+
             <button
               onClick={handleSurpriseMe}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 transition-all duration-200"
@@ -385,6 +401,27 @@ export default function CompanyPageContent({
           </div>
         )}
       </div>
+
+      {/* Feature 3 — Timeframe-Specific Company Topic Intelligence Section */}
+      <CompanyAnalyticsSection
+        companyName={companyName}
+        questions={rawQuestions}
+        solvedQuestionIds={solvedIdsSet}
+        activeTopicFilter={topic}
+        activeTimeframeLabel={
+          tabsConfig.find((t) => t.key === activeTab)?.label || "All"
+        }
+        onTopicClick={handleTopicClickFromAnalytics}
+      />
+
+      {/* Feature 1 — Interview Simulator Modal */}
+      <InterviewSimulatorModal
+        companySlug={companySlug}
+        companyName={companyName}
+        questions={companyData.roadmaps.all}
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+      />
 
       {/* Tabs */}
       <div className="flex border-b border-border overflow-x-auto scrollbar-none gap-0">

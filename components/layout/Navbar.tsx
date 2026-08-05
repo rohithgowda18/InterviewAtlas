@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Github, BookOpen, Star } from "lucide-react";
+import { Github, BookOpen, Star, Sparkles } from "lucide-react";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import PWAInstallButton from "@/components/common/PWAInstallButton";
 
@@ -21,7 +21,15 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link
+            href="/atlas-150"
+            className="flex items-center gap-1.5 text-xs font-extrabold text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition-all px-3 py-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 shadow-sm"
+          >
+            <Sparkles className="h-3.5 w-3.5 fill-indigo-400" />
+            <span>Interview Atlas 150</span>
+          </Link>
+
           <PWAInstallButton />
           <a
             href="https://github.com/rohithgowda18/InterviewAtlas"
