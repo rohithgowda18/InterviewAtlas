@@ -92,14 +92,8 @@ export default function CompanyPageContent({
   const [currentPage, setCurrentPage] = useState(1);
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const itemsPerPage = 20;
-  const tabsRef = useRef<HTMLDivElement>(null);
-  const isFirstRender = useRef(true);
-
   const handleTabChange = useCallback((tabKey: typeof activeTab) => {
     setActiveTab(tabKey);
-    if (tabsRef.current) {
-      tabsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
   }, []);
 
   const handleTopicClickFromAnalytics = useCallback((topicName: string) => {
@@ -433,7 +427,7 @@ export default function CompanyPageContent({
       />
 
       {/* Tabs */}
-      <div ref={tabsRef} className="flex border-b border-border overflow-x-auto scrollbar-none gap-0 scroll-mt-20">
+      <div className="flex border-b border-border overflow-x-auto scrollbar-none gap-0">
         {tabsConfig.map((tab) => {
           const tabQuestions = questionsMap[tab.key] || [];
           if (tab.key !== "all" && tabQuestions.length === 0) return null;
