@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { ensureVisibleOnMobile } from "@/lib/mobileScroll";
 
 interface OverflowTopicChipProps {
   hiddenTopics: readonly string[];
@@ -66,6 +66,7 @@ export default function OverflowTopicChip({
       {/* Popover / Tooltip */}
       {isOpen && (
         <div
+          ref={(el) => ensureVisibleOnMobile(el)}
           onClick={(e) => e.stopPropagation()}
           className="absolute left-0 bottom-full mb-1.5 z-50 min-w-[160px] max-w-[240px] p-2 rounded-xl border border-border bg-popover/95 text-popover-foreground shadow-xl backdrop-blur-md animate-fade-in text-xs"
         >

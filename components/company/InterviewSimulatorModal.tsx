@@ -50,9 +50,10 @@ export default function InterviewSimulatorModal({
   const [loading, setLoading] = useState(false);
   const [timeRemainingSeconds, setTimeRemainingSeconds] = useState<number>(0);
 
-  // Resume active session on open
+  // Resume active session on open & lock body scroll
   useEffect(() => {
     if (isOpen) {
+      document.body.style.overflow = "hidden";
       const active = loadSimulatorSession(companySlug);
       if (active && !active.completed) {
         setSession(active);
@@ -60,7 +61,13 @@ export default function InterviewSimulatorModal({
         const totalSec = active.config.durationMinutes * 60;
         setTimeRemainingSeconds(Math.max(0, totalSec - elapsedSec));
       }
+    } else {
+      document.body.style.overflow = "";
     }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen, companySlug]);
 
   // Countdown timer effect

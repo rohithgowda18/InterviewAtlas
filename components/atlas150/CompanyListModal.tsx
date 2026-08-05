@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { X, Building2, ExternalLink } from "lucide-react";
 
@@ -18,6 +18,17 @@ export default function CompanyListModal({
   onClose,
 }: CompanyListModalProps) {
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

@@ -7,7 +7,7 @@ import DifficultyBadge from "@/components/common/DifficultyBadge";
 import TopicBadge from "@/components/common/TopicBadge";
 import OverflowTopicChip from "@/components/common/OverflowTopicChip";
 import { useDSA } from "@/hooks/useDSA";
-import { cn } from "@/lib/utils";
+import { ensureVisibleOnMobile } from "@/lib/mobileScroll";
 
 interface QuestionTableProps {
   questions: readonly Question[];
@@ -165,7 +165,7 @@ function QuestionCard({
 
       {/* Notes */}
       {isNotesExpanded && (
-        <div className="mt-3.5 ml-9 bg-secondary/10 rounded-lg p-3.5 border border-border/70">
+        <div ref={(el) => ensureVisibleOnMobile(el)} className="mt-3.5 ml-9 bg-secondary/10 rounded-lg p-3.5 border border-border/70">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">
             My Notes
           </span>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { CompanyAnalyticsSummary, computeTimeframeAnalytics, CompanyTopicAnalytics } from "@/lib/analyticsEngine";
 import { Question } from "@/types";
+import { ensureVisibleOnMobile } from "@/lib/mobileScroll";
 import {
   BarChart3,
   Target,
@@ -37,6 +38,43 @@ export default function CompanyAnalyticsSection({
   const [expandedHigh, setExpandedHigh] = useState(false);
   const [expandedMedium, setExpandedMedium] = useState(false);
   const [expandedLow, setExpandedLow] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const highRef = useRef<HTMLDivElement>(null);
+  const mediumRef = useRef<HTMLDivElement>(null);
+  const lowRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleMain = () => {
+    const nextState = !isExpanded;
+    setIsExpanded(nextState);
+    if (nextState) {
+      ensureVisibleOnMobile(containerRef.current);
+    }
+  };
+
+  const handleToggleHigh = () => {
+    const nextState = !expandedHigh;
+    setExpandedHigh(nextState);
+    if (nextState) {
+      ensureVisibleOnMobile(highRef.current);
+    }
+  };
+
+  const handleToggleMedium = () => {
+    const nextState = !expandedMedium;
+    setExpandedMedium(nextState);
+    if (nextState) {
+      ensureVisibleOnMobile(mediumRef.current);
+    }
+  };
+
+  const handleToggleLow = () => {
+    const nextState = !expandedLow;
+    setExpandedLow(nextState);
+    if (nextState) {
+      ensureVisibleOnMobile(lowRef.current);
+    }
+  };
 
   // Compute analytics dynamically per active timeframe questions
   const analytics: CompanyAnalyticsSummary | null = useMemo(() => {
@@ -95,10 +133,10 @@ export default function CompanyAnalyticsSection({
   };
 
   return (
-    <div className="my-6 rounded-2xl border border-border bg-card/60 shadow-sm overflow-hidden animate-fade-in transition-all">
+    <div ref={containerRef} className="my-6 rounded-2xl border border-border bg-card/60 shadow-sm overflow-hidden animate-fade-in transition-all">
       {/* Header Bar */}
       <div
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={handleToggleMain}
         className="flex flex-col sm:flex-row sm:items-center justify-between px-5 py-4 bg-muted/30 cursor-pointer select-none border-b border-border/60 hover:bg-muted/50 transition-colors gap-3"
       >
         <div className="flex items-center gap-3">
@@ -212,7 +250,7 @@ export default function CompanyAnalyticsSection({
           {/* 3. Priority Sections */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             {/* HIGH PRIORITY */}
-            <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 flex flex-col gap-3">
+            <div ref={highRef} className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-emerald-500 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5" /> High Priority (Top 25%)
@@ -235,7 +273,8 @@ export default function CompanyAnalyticsSection({
 
               {analytics.highPriorityTopics.length > 6 && (
                 <button
-                  onClick={() => setExpandedHigh(!expandedHigh)}
+                  type="button"
+                  onClick={handleToggleHigh}
                   className="text-[11px] font-bold text-emerald-500 hover:underline self-start mt-1 cursor-pointer"
                 >
                   {expandedHigh ? "Show Less" : `+${analytics.highPriorityTopics.length - 6} more`}
@@ -244,7 +283,7 @@ export default function CompanyAnalyticsSection({
             </div>
 
             {/* MEDIUM PRIORITY */}
-            <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 flex flex-col gap-3">
+            <div ref={mediumRef} className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-amber-500 uppercase tracking-wider flex items-center gap-1.5">
                   Medium Priority (Middle 50%)
@@ -267,7 +306,8 @@ export default function CompanyAnalyticsSection({
 
               {analytics.mediumPriorityTopics.length > 6 && (
                 <button
-                  onClick={() => setExpandedMedium(!expandedMedium)}
+                  type="button"
+                  onClick={handleToggleMedium}
                   className="text-[11px] font-bold text-amber-500 hover:underline self-start mt-1 cursor-pointer"
                 >
                   {expandedMedium ? "Show Less" : `+${analytics.mediumPriorityTopics.length - 6} more`}
@@ -276,7 +316,7 @@ export default function CompanyAnalyticsSection({
             </div>
 
             {/* LOW PRIORITY */}
-            <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 flex flex-col gap-3">
+            <div ref={lowRef} className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
                   Low Priority (Bottom 25%)
@@ -299,7 +339,8 @@ export default function CompanyAnalyticsSection({
 
               {analytics.lowPriorityTopics.length > 6 && (
                 <button
-                  onClick={() => setExpandedLow(!expandedLow)}
+                  type="button"
+                  onClick={handleToggleLow}
                   className="text-[11px] font-bold text-blue-400 hover:underline self-start mt-1 cursor-pointer"
                 >
                   {expandedLow ? "Show Less" : `+${analytics.lowPriorityTopics.length - 6} more`}
