@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Question, Roadmap } from "@/types";
 import { useDSA } from "@/hooks/useDSA";
@@ -90,8 +90,16 @@ export default function CompanyPageContent({
   >("frequency");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const itemsPerPage = 20;
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  const handleTabChange = useCallback((tabKey: typeof activeTab) => {
+    setActiveTab(tabKey);
+    if (tabsRef.current) {
+      tabsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   const handleTopicClickFromAnalytics = useCallback((topicName: string) => {
     setTopic(topicName.toLowerCase());
@@ -424,7 +432,7 @@ export default function CompanyPageContent({
       />
 
       {/* Tabs */}
-      <div className="flex border-b border-border overflow-x-auto scrollbar-none gap-0">
+      <div ref={tabsRef} className="flex border-b border-border overflow-x-auto scrollbar-none gap-0 scroll-mt-20">
         {tabsConfig.map((tab) => {
           const tabQuestions = questionsMap[tab.key] || [];
           if (tab.key !== "all" && tabQuestions.length === 0) return null;
@@ -432,7 +440,7 @@ export default function CompanyPageContent({
           return (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => handleTabChange(tab.key)}
               className={cn(
                 "px-4 py-2.5 font-bold text-sm border-b-2 whitespace-nowrap transition-all duration-200 flex items-center gap-1.5",
                 activeTab === tab.key
