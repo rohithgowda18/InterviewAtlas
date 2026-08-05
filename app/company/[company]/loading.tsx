@@ -1,4 +1,8 @@
-import Skeleton, { QuestionTableSkeleton, StatsCardsSkeleton } from "@/components/common/Skeleton";
+import Skeleton, {
+  QuestionTableSkeleton,
+  StatsCardsSkeleton,
+  TopicIntelligenceSkeleton,
+} from "@/components/common/Skeleton";
 
 export default function CompanyLoading() {
   return (
@@ -21,6 +25,9 @@ export default function CompanyLoading() {
 
       {/* Stats cards skeleton */}
       <StatsCardsSkeleton />
+
+      {/* Topic Intelligence Skeleton */}
+      <TopicIntelligenceSkeleton />
 
       {/* Filter controls skeleton */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">

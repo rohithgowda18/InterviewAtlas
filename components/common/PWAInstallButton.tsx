@@ -37,18 +37,11 @@ export default function PWAInstallButton({ className }: { className?: string }) 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     window.addEventListener("appinstalled", handleAppInstalled);
 
-    // Clean up any stale legacy service workers & caches from browser memory
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        for (const reg of registrations) {
-          reg.unregister();
-        }
+    // Register Service Worker for PWA support
+    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+      navigator.serviceWorker.register("/sw.js").catch((err) => {
+        console.warn("SW registration failed:", err);
       });
-      if ("caches" in window) {
-        caches.keys().then((keys) => {
-          for (const key of keys) caches.delete(key);
-        });
-      }
     }
 
     return () => {

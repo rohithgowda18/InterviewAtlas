@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   },
 };
 
+import AppSplashScreen from "@/components/common/AppSplashScreen";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,6 +47,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="flex flex-col min-h-screen bg-background text-foreground">
+        <AppSplashScreen />
         <Providers>
           <Navbar />
           <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col">
