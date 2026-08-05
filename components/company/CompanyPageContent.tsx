@@ -418,7 +418,7 @@ export default function CompanyPageContent({
       <InterviewSimulatorModal
         companySlug={companySlug}
         companyName={companyName}
-        questions={companyData.roadmaps.all}
+        questions={questionsMap.all}
         isOpen={isSimulatorOpen}
         onClose={() => setIsSimulatorOpen(false)}
       />
