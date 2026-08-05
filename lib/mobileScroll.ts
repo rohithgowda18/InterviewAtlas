@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect } from "react";
-
 /**
  * Utility helper to ensure expanding content is visible in the viewport on mobile devices.
  * If target element or newly revealed content extends below the visible screen viewport,

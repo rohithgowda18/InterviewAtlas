@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ensureVisibleOnMobile } from "@/lib/mobileScroll";
+import { cn } from "@/lib/utils";
 
 interface OverflowTopicChipProps {
   hiddenTopics: readonly string[];

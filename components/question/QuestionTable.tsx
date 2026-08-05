@@ -8,6 +8,7 @@ import TopicBadge from "@/components/common/TopicBadge";
 import OverflowTopicChip from "@/components/common/OverflowTopicChip";
 import { useDSA } from "@/hooks/useDSA";
 import { ensureVisibleOnMobile } from "@/lib/mobileScroll";
+import { cn } from "@/lib/utils";
 
 interface QuestionTableProps {
   questions: readonly Question[];
