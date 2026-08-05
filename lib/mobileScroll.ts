@@ -24,3 +24,23 @@ export function ensureVisibleOnMobile(element: HTMLElement | null, padding: numb
     }
   });
 }
+
+/**
+ * Utility helper to smoothly scroll an element to the top of the viewport on mobile devices.
+ * Used when opening the Interview Simulator so it appears at the top of the screen
+ * without requiring manual scrolling. Only applies on mobile (viewport width <= 768px).
+ */
+export function scrollToTopOnMobile(element: HTMLElement | null) {
+  if (!element || typeof window === "undefined") return;
+
+  // Only apply scroll adjustments on mobile screens (viewport width <= 768px)
+  if (window.innerWidth > 768) return;
+
+  // Use requestAnimationFrame to ensure the element has expanded/rendered before scrolling
+  requestAnimationFrame(() => {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+}

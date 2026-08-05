@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { scrollToTopOnMobile } from "@/lib/mobileScroll";
 import {
   InterviewSession,
   InterviewMode,
@@ -49,6 +50,7 @@ export default function InterviewSimulatorModal({
   const [targetRole, setTargetRole] = useState<TargetRole>("SDE-1");
   const [loading, setLoading] = useState(false);
   const [timeRemainingSeconds, setTimeRemainingSeconds] = useState<number>(0);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Resume active session on open & lock body scroll
   useEffect(() => {
@@ -61,6 +63,8 @@ export default function InterviewSimulatorModal({
         const totalSec = active.config.durationMinutes * 60;
         setTimeRemainingSeconds(Math.max(0, totalSec - elapsedSec));
       }
+      // Scroll simulator to top of viewport on mobile when opening
+      scrollToTopOnMobile(modalRef.current);
     } else {
       document.body.style.overflow = "";
     }
@@ -95,7 +99,7 @@ export default function InterviewSimulatorModal({
       companyName,
       questions,
       mode,
-      targetRole
+      targetRole,
     );
 
     if (newSession) {
@@ -128,7 +132,10 @@ export default function InterviewSimulatorModal({
 
   const handleNextQuestion = () => {
     if (!session) return;
-    const nextIdx = Math.min(session.questions.length - 1, session.currentQuestionIndex + 1);
+    const nextIdx = Math.min(
+      session.questions.length - 1,
+      session.currentQuestionIndex + 1,
+    );
     const updatedSession = { ...session, currentQuestionIndex: nextIdx };
     setSession(updatedSession);
     saveSimulatorSession(updatedSession);
@@ -168,10 +175,14 @@ export default function InterviewSimulatorModal({
 
   const solvedCount = session?.questions.filter((q) => q.solved).length || 0;
   const totalCount = session?.questions.length || 0;
-  const scorePercentage = totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0;
+  const scorePercentage =
+    totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+    <div
+      ref={modalRef}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+    >
       <div className="relative w-full max-w-3xl bg-card border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/40">
@@ -214,7 +225,7 @@ export default function InterviewSimulatorModal({
                       "p-4 rounded-xl border flex flex-col text-left transition-all cursor-pointer",
                       mode === "quick"
                         ? "border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500"
-                        : "border-border bg-secondary/30 hover:bg-secondary/60"
+                        : "border-border bg-secondary/30 hover:bg-secondary/60",
                     )}
                   >
                     <span className="font-extrabold text-sm text-foreground flex items-center gap-1.5">
@@ -232,11 +243,12 @@ export default function InterviewSimulatorModal({
                       "p-4 rounded-xl border flex flex-col text-left transition-all cursor-pointer",
                       mode === "standard"
                         ? "border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500"
-                        : "border-border bg-secondary/30 hover:bg-secondary/60"
+                        : "border-border bg-secondary/30 hover:bg-secondary/60",
                     )}
                   >
                     <span className="font-extrabold text-sm text-foreground flex items-center gap-1.5">
-                      <Target className="h-4 w-4 text-indigo-400" /> Standard Round
+                      <Target className="h-4 w-4 text-indigo-400" /> Standard
+                      Round
                     </span>
                     <span className="text-xs text-muted-foreground mt-1 font-medium">
                       45 Mins • 5 Questions
@@ -250,11 +262,12 @@ export default function InterviewSimulatorModal({
                       "p-4 rounded-xl border flex flex-col text-left transition-all cursor-pointer",
                       mode === "full"
                         ? "border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500"
-                        : "border-border bg-secondary/30 hover:bg-secondary/60"
+                        : "border-border bg-secondary/30 hover:bg-secondary/60",
                     )}
                   >
                     <span className="font-extrabold text-sm text-foreground flex items-center gap-1.5">
-                      <Zap className="h-4 w-4 text-indigo-400" /> Full Onsite Loop
+                      <Zap className="h-4 w-4 text-indigo-400" /> Full Onsite
+                      Loop
                     </span>
                     <span className="text-xs text-muted-foreground mt-1 font-medium">
                       90 Mins • 8 Questions
@@ -276,7 +289,7 @@ export default function InterviewSimulatorModal({
                       "px-4 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer",
                       targetRole === "SDE-1"
                         ? "border-indigo-500 bg-indigo-500/10 text-indigo-400 font-extrabold"
-                        : "border-border bg-secondary/30 text-muted-foreground"
+                        : "border-border bg-secondary/30 text-muted-foreground",
                     )}
                   >
                     SDE-1 (Easy → Med → Hard)
@@ -288,7 +301,7 @@ export default function InterviewSimulatorModal({
                       "px-4 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer",
                       targetRole === "SDE-2"
                         ? "border-indigo-500 bg-indigo-500/10 text-indigo-400 font-extrabold"
-                        : "border-border bg-secondary/30 text-muted-foreground"
+                        : "border-border bg-secondary/30 text-muted-foreground",
                     )}
                   >
                     SDE-2 (Med → Hard)
@@ -313,7 +326,9 @@ export default function InterviewSimulatorModal({
               </div>
 
               <div>
-                <h3 className="text-2xl font-black text-foreground">Interview Completed!</h3>
+                <h3 className="text-2xl font-black text-foreground">
+                  Interview Completed!
+                </h3>
                 <p className="text-sm text-muted-foreground mt-1">
                   Overall Score for {companyName} Mock Assessment
                 </p>
@@ -321,20 +336,36 @@ export default function InterviewSimulatorModal({
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-lg">
                 <div className="p-4 rounded-xl border border-border bg-secondary/30 flex flex-col items-center">
-                  <span className="text-2xl font-black text-emerald-500">{scorePercentage}%</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Score</span>
+                  <span className="text-2xl font-black text-emerald-500">
+                    {scorePercentage}%
+                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">
+                    Score
+                  </span>
                 </div>
                 <div className="p-4 rounded-xl border border-border bg-secondary/30 flex flex-col items-center">
-                  <span className="text-2xl font-black text-foreground">{solvedCount}/{totalCount}</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Solved</span>
+                  <span className="text-2xl font-black text-foreground">
+                    {solvedCount}/{totalCount}
+                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">
+                    Solved
+                  </span>
                 </div>
                 <div className="p-4 rounded-xl border border-border bg-secondary/30 flex flex-col items-center">
-                  <span className="text-2xl font-black text-indigo-400">{session.config.durationMinutes}m</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Duration</span>
+                  <span className="text-2xl font-black text-indigo-400">
+                    {session.config.durationMinutes}m
+                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">
+                    Duration
+                  </span>
                 </div>
                 <div className="p-4 rounded-xl border border-border bg-secondary/30 flex flex-col items-center">
-                  <span className="text-2xl font-black text-amber-500">{session.config.targetRole}</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Role</span>
+                  <span className="text-2xl font-black text-amber-500">
+                    {session.config.targetRole}
+                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase mt-1">
+                    Role
+                  </span>
                 </div>
               </div>
 
@@ -353,10 +384,16 @@ export default function InterviewSimulatorModal({
               <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-border bg-secondary/30">
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-extrabold text-foreground">
-                    Question {session.currentQuestionIndex + 1} of {session.questions.length}
+                    Question {session.currentQuestionIndex + 1} of{" "}
+                    {session.questions.length}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
-                    (~{session.questions[session.currentQuestionIndex].expectedTimeMinutes} mins)
+                    (~
+                    {
+                      session.questions[session.currentQuestionIndex]
+                        .expectedTimeMinutes
+                    }{" "}
+                    mins)
                   </span>
                 </div>
 
@@ -376,7 +413,9 @@ export default function InterviewSimulatorModal({
                 return (
                   <div className="p-5 rounded-2xl border border-border bg-card/80 flex flex-col gap-4 shadow-sm">
                     <div className="flex items-start justify-between gap-4">
-                      <h3 className="font-extrabold text-lg text-foreground">{q.title}</h3>
+                      <h3 className="font-extrabold text-lg text-foreground">
+                        {q.title}
+                      </h3>
                       <DifficultyBadge difficulty={q.difficulty} />
                     </div>
 
@@ -403,16 +442,22 @@ export default function InterviewSimulatorModal({
                       </a>
 
                       <button
-                        onClick={() => handleToggleQuestionSolved(session.currentQuestionIndex)}
+                        onClick={() =>
+                          handleToggleQuestionSolved(
+                            session.currentQuestionIndex,
+                          )
+                        }
                         className={cn(
                           "px-4 py-2 rounded-xl border text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer",
                           qItem.solved
                             ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-500"
-                            : "bg-secondary border-border text-foreground hover:bg-secondary/80"
+                            : "bg-secondary border-border text-foreground hover:bg-secondary/80",
                         )}
                       >
                         <CheckCircle2 className="h-4 w-4" />
-                        <span>{qItem.solved ? "Marked Solved" : "Mark Solved"}</span>
+                        <span>
+                          {qItem.solved ? "Marked Solved" : "Mark Solved"}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -431,7 +476,10 @@ export default function InterviewSimulatorModal({
                   </button>
                   <button
                     onClick={handleNextQuestion}
-                    disabled={session.currentQuestionIndex === session.questions.length - 1}
+                    disabled={
+                      session.currentQuestionIndex ===
+                      session.questions.length - 1
+                    }
                     className="p-2 rounded-xl border border-border bg-secondary text-foreground disabled:opacity-30 cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
