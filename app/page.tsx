@@ -1,5 +1,6 @@
 import { getCompaniesList, getAppMetadata } from "@/lib/data";
 import CompanyGrid from "@/components/company/CompanyGrid";
+import DailyQuestionCard from "@/components/home/DailyQuestionCard";
 import { Zap, Building2, BookOpen } from "lucide-react";
 
 export const revalidate = 3600;
@@ -74,6 +75,11 @@ export default async function Home() {
               </div>
             );
           })}
+        </div>
+
+        {/* Daily Interview Question Card */}
+        <div className="w-full mt-2">
+          <DailyQuestionCard />
         </div>
       </div>
 
