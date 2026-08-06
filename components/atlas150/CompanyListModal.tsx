@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { X, Building2, ExternalLink } from "lucide-react";
 
@@ -18,52 +19,82 @@ export default function CompanyListModal({
   onClose,
 }: CompanyListModalProps) {
   const [search, setSearch] = useState("");
+  const [mounted, setMounted] = useState(false);
+  const scrollYRef = useRef(0);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    scrollYRef.current = window.scrollY;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollYRef.current}px`;
+    document.body.style.width = "100%";
+
     return () => {
       document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, scrollYRef.current);
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   const filteredCompanies = companies.filter((c) =>
     c.toLowerCase().includes(search.toLowerCase())
   );
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Companies for ${questionTitle}`}
+        className="relative w-full max-w-lg bg-card border-0 md:border md:border-border md:rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full max-h-none md:h-auto md:max-h-[85vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/40">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+        <div
+          className="flex items-center justify-between px-4 md:px-6 py-3.5 md:py-4 border-b border-border bg-muted/40 shrink-0"
+          style={{
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.875rem)",
+          }}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
               <Building2 className="h-5 w-5" />
             </div>
-            <div>
-              <h2 className="font-extrabold text-base text-foreground tracking-tight">
+            <div className="min-w-0">
+              <h2 className="font-extrabold text-base text-foreground tracking-tight truncate">
                 Appears in {companies.length} Companies
               </h2>
-              <span className="text-xs text-muted-foreground font-medium">
+              <span className="text-xs text-muted-foreground font-medium truncate block">
                 {questionTitle}
               </span>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+            aria-label="Close modal"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer shrink-0 ml-2"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Search input */}
-        <div className="p-4 border-b border-border bg-card">
+        <div className="p-4 border-b border-border bg-card shrink-0">
           <input
             type="text"
             value={search}
@@ -74,7 +105,12 @@ export default function CompanyListModal({
         </div>
 
         {/* List of Companies */}
-        <div className="p-4 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div
+          className="p-4 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 gap-2"
+          style={{
+            paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)",
+          }}
+        >
           {filteredCompanies.map((slug) => {
             const formattedName = slug
               .split("-")
@@ -95,6 +131,7 @@ export default function CompanyListModal({
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
